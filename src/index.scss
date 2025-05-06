@@ -6,6 +6,8 @@ $color-grey: #999;
 $color-red: red;
 
 @import './components/navbar/Navbar.scss';
+@import './components/product-card/product-card.scss';
+@import './styles/store.scss';
 
 *{
   margin: 0;
