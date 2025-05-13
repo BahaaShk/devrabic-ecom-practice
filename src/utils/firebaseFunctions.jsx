@@ -4,7 +4,18 @@ import {
   signOut,
 } from "firebase/auth";
 import { auth, database } from "./firebaseConfig";
-import { setDoc, doc, query, collection, where, getDocs } from "firebase/firestore";
+import {
+  setDoc,
+  doc,
+  query,
+  collection,
+  where,
+  getDocs,
+  updateDoc,
+  arrayUnion,
+  arrayRemove,
+  onSnapshot,
+} from "firebase/firestore";
 
 export const registerUser = async (username, email, password) => {
   try {
@@ -23,7 +34,7 @@ export const registerUser = async (username, email, password) => {
 
 export const signInUser = async (email, password) => {
   try {
-   await signInWithEmailAndPassword(auth, email, password);
+    await signInWithEmailAndPassword(auth, email, password);
     return { success: true };
   } catch (error) {
     return { success: false, error: error.message };
@@ -32,7 +43,7 @@ export const signInUser = async (email, password) => {
 
 export const signOutUser = async () => {
   try {
-   await signOut(auth);
+    await signOut(auth);
     return { success: true };
   } catch (error) {
     return { success: false, error: error.message };
@@ -64,16 +75,52 @@ export function getFrontendErrorMessage(errorCode) {
   }
 }
 
-export const fetchUserData = async(user) => {
-try {
-  const q = query(collection(database, 'users'),
-  where('__name__','==', user.uid)
-)
-const doc = await getDocs(q);
-const data = doc.docs[0].data()
-return {success: true, data: data}
-} 
-catch (error) {
-  return {success: false, error: error.message}
-}
+export const fetchUserData = async (user) => {
+  try {
+    const q = query(
+      collection(database, "users"),
+      where("__name__", "==", user.uid)
+    );
+    const doc = await getDocs(q);
+    const data = doc.docs[0].data();
+    return { success: true, data: data };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+};
+
+export const updateArrayData = async (product) => {
+  try {
+    const user = auth.currentUser;
+    const docRef = doc(database, "users", user.uid);
+    await updateDoc(docRef, {
+      cartProducts: arrayUnion(product),
+    });
+    return { success: true };
+  } catch (error) {
+    return {success: false, error:error.message}
+  }
+};
+
+export const removeArrayData = async (product) => {
+  try {
+    const user = auth.currentUser;
+    const docRef = doc(database, "users", user.uid);
+    await updateDoc(docRef, {
+      cartProducts: arrayRemove(product),
+    });
+    return { success: true };
+  } catch (error) {
+    return {success: false, error:error.message}
+  }
+};
+
+export const setupDBListener = (user, callback) => {
+const docRef = doc(database, "users", user.uid);
+return onSnapshot(docRef, (doc) => {
+  if(doc.exists()){
+    const data = doc.data();
+    callback(data['cartProducts'])
+  }
+})
 }

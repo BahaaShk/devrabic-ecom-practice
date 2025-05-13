@@ -6,7 +6,7 @@ import { signOutUser } from "../../../utils/firebaseFunctions";
 import { ClipLoader } from "react-spinners";
 
 const DesktopMenu = () => {
-  const { user, loading } = useContext(MainContext);
+  const { user, loading,cartProducts } = useContext(MainContext);
   const loc = useLocation();
   const navigate = useNavigate();
   const signOut = async () => {
@@ -22,21 +22,25 @@ const DesktopMenu = () => {
       >
         Store
       </Link>
+      <div className="navbar__right-side__item">
+
       <Link
         to={"/cart"}
-        className={`navbar__right-side__item ${
+        className={`navbar__right-side__item navbar__right-side__item--cart-count ${
           isCartSelected(loc.pathname) && "navbar__right-side__item-selected"
         }`}
-      >
+        >
         Cart
       </Link>
-      {
-      loading ? <ClipLoader
-      color="black"
-      size={40}
-    />
-      :
-      user ? (
+      {user && cartProducts && (
+        <div className="navbar__right-side__cart-count">
+          {cartProducts.length}
+        </div>
+      )}
+        </div>
+      {loading ? (
+        <ClipLoader color="black" size={40} />
+      ) : user ? (
         <button onClick={signOut} className="navbar__right-side__btn primary">
           Sign Out
         </button>

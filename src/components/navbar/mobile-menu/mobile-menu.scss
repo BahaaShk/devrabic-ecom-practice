@@ -17,6 +17,9 @@
       padding: 16px 0;
       justify-content: center;
       opacity: 0.8; 
+      &--cart-count{
+        padding: 0 10px 0 0;
+      }
       &-selected{
         font-weight: 600;
         opacity: 1;
@@ -25,5 +28,11 @@
     &__btn{
       max-width: 100%;
       margin: 20px auto
+    }
+    &__cart-count{
+      padding: 3px 9px;
+      background-color: $color-primary;
+      color: $color-white;
+      border-radius: 50%;
     }
 }

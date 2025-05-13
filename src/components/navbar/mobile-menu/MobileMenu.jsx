@@ -7,7 +7,7 @@ import { signOutUser } from "../../../utils/firebaseFunctions";
 const MobileMenu = ({closeFn }) => {
   const loc = useLocation();
   const navigate = useNavigate()
-  const {user, loading} = useContext(MainContext);
+  const {user, loading, cartProducts} = useContext(MainContext);
 const signOut = async () => {
   await signOutUser()
 }
@@ -23,15 +23,23 @@ const signOut = async () => {
         >
           Store
         </Link>
+        <div className="mobile-menu__item">
+
         <Link
         onClick={closeFn}
-          to={"/cart"}
-          className={`mobile-menu__item ${
-            isCartSelected(loc.pathname) && "mobile-menu__item-selected"
-          }`}
+        to={"/cart"}
+        className={`mobile-menu__item mobile-menu__item--cart-count ${
+          isCartSelected(loc.pathname) && "mobile-menu__item-selected"
+        }`}
         >
           Cart
         </Link>
+         {user && cartProducts && (
+        <div className="mobile-menu__cart-count">
+          {cartProducts.length}
+        </div>
+      )}
+          </div>
         {
           loading ? <ClipLoader
           color="red"
